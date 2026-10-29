@@ -1,4 +1,8 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Programa de Soja Sustentable</title><meta name="description" content="Guía interactiva del programa de sustentabilidad y trazabilidad de soja: esquemas comerciales (EUDR, EPA, 2BSvs, sin cláusula), calificación de lotes y recorridos logísticos."><meta property="og:title" content="Programa de Soja Sustentable"><meta property="og:description" content="Guía interactiva del programa de sustentabilidad y trazabilidad de soja: esquemas comerciales (EUDR, EPA, 2BSvs, sin cláusula), calificación de lotes y recorridos logísticos."><meta name="claude:viewport-fit-sides" content="cover"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Programa de Soja Sustentable</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap">
 <style>
 /* Layout: una sola columna de "hoja de ruta" — elegís mercado, elegís camino, el camión recorre y debajo aparecen las paradas con quién hace qué. */
 :root{
@@ -39,7 +43,9 @@ p{margin:0}
 :root[data-theme="dark"] .logo-dark{display:block}
 
 header.top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:20px 0;flex-wrap:wrap}
-header.top img{height:36px;width:auto}
+header.top{padding-top:28px!important}
+header.top img{height:72px;width:auto;max-width:100%}
+@media (max-width:560px){header.top img{height:56px}}
 .tag{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
 
 .hero{display:grid;gap:14px;padding-top:8px}
@@ -77,6 +83,13 @@ header.top img{height:36px;width:auto}
 .cutline h3{font-size:15px;font-weight:600;margin-bottom:4px}
 .cutline p{font-size:14px;color:var(--muted)}
 .cutsvg{width:100%;height:auto;display:block;margin-top:8px}
+.cutlist{display:none}
+.cutlist span{font-size:13px;padding:5px 10px;border-radius:999px;background:var(--bg);color:var(--muted);font-variant-numeric:tabular-nums}
+.cutlist span.on{background:var(--teal);color:#fff;font-weight:600}
+@media (max-width:560px){.cutsvg{display:none}.cutlist{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.toggle{display:grid!important;grid-template-columns:1fr 1fr;width:100%;border-radius:14px!important}.toggle button{text-align:center!important;padding:10px 8px!important;border-radius:10px!important;font-size:14px!important}
+.roadbox svg{min-width:0!important}
+.hero h1{font-size:30px}.step-label h2{font-size:20px}.stop{padding:14px}.verdict .big{font-size:22px}}
 
 /* Ruta */
 .toggle{display:inline-flex;background:var(--surface);border-radius:999px;padding:4px;gap:4px;flex-wrap:wrap}
@@ -180,6 +193,7 @@ header.top img{height:36px;width:auto}
       <h3>¿Desde cuándo tiene que ser agrícola el lote?</h3>
       <p id="cutText"></p>
       <svg class="cutsvg" id="cutsvg" viewBox="0 0 900 96" role="img" aria-label="Fechas de corte de cada esquema"></svg>
+      <div class="cutlist" id="cutlist"></div>
     </div>
   </section>
 
@@ -374,6 +388,7 @@ function renderFicha(){
     s+=`<text x="${up?cx+14:cx-14}" y="${ty}" text-anchor="${up?'start':'end'}" font-size="${on?15:13}" font-weight="${on?700:500}" fill="${on?'var(--ink)':'var(--muted)'}" font-family="Outfit,sans-serif">${n} · ${d}</text>`;});
   if(cur==='comun') s+=`<text x="450" y="22" text-anchor="middle" font-size="14" font-weight="600" fill="var(--ink)" font-family="Outfit,sans-serif">Soja sin cláusula: sin fecha de corte</text>`;
   $('cutsvg').innerHTML=s;
+  $('cutlist').innerHTML=pts.map(([k,n,d])=>`<span class="${k===cur?'on':''}">${n} · ${d}</span>`).join('')+(cur==='comun'?'<span class="on">Sin cláusula · sin fecha de corte</span>':'');
 }
 function renderCheck(){
   const m=M[cur],d=m[view];
@@ -387,7 +402,9 @@ function renderCheck(){
   else{v.className='verdict';v.innerHTML=`<div class="big">${d.ok}</div><div class="note">${d.okNote}</div>`;}
 }
 function renderRoad(){
-  const viaPlant=route==='plant',X={campo:110,planta:450,puerto:790};
+  const narrow=matchMedia('(max-width:560px)').matches;
+  $('road').setAttribute('viewBox',narrow?'0 0 400 190':'0 0 900 190');
+  const viaPlant=route==='plant',X=narrow?{campo:60,planta:200,puerto:340}:{campo:110,planta:450,puerto:790};
   const icon=(cx,kind,on)=>{const c=on?'var(--teal)':'var(--line)',f=on?'var(--bg)':'var(--surface)';
     let g=`<circle cx="${cx}" cy="70" r="34" fill="${f}" stroke="${c}" stroke-width="3"/>`;
     if(kind==='campo') g+=`<g stroke="var(--hi)" stroke-width="3" stroke-linecap="round" fill="none"><path d="M${cx-16} 86 Q${cx-16} 64 ${cx-4} 56"/><path d="M${cx} 86 V52"/><path d="M${cx+16} 86 Q${cx+16} 64 ${cx+4} 56"/></g><g fill="var(--hi)"><ellipse cx="${cx-8}" cy="62" rx="5" ry="3"/><ellipse cx="${cx+8}" cy="62" rx="5" ry="3"/><ellipse cx="${cx}" cy="50" rx="3" ry="5"/></g>`;
@@ -424,6 +441,8 @@ $('v-com').addEventListener('click',()=>setView('com'));
 $('v-pla').addEventListener('click',()=>setView('pla'));
 function renderAll(){renderView();renderMarkets();renderFicha();renderCheck();renderRoad();renderStops();}
 renderAll();
+let _nw=matchMedia('(max-width:560px)').matches;
+addEventListener('resize',()=>{const n=matchMedia('(max-width:560px)').matches;if(n!==_nw){_nw=n;renderRoad();}});
 </script>
 
 </body></html>
