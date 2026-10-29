@@ -1,0 +1,8 @@
+{
+  "name": "Programa de Soja Sustentable",
+  "description": "Guía interactiva del programa de sustentabilidad y trazabilidad de soja: esquemas comerciales (EUDR, EPA, 2BSvs, sin cláusula), calificación de lotes y recorridos logísticos.",
+  "permissions": [],
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
